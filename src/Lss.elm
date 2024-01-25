@@ -8,7 +8,7 @@ module Lss exposing (main)
 -- import Json.Encode as Encode
 -- import Task
 
-import Array
+import Debug
 import Browser
 import Browser.Events exposing (onKeyDown)
 import Html exposing (..)
@@ -148,42 +148,16 @@ toKey string =
             PressedControl string
 
 
+themes : List String
+themes =
+    [ "default", "white", "solarized-dark", "solarized-light" ]
+
 nextTheme : Model -> Model
 nextTheme m =
     let
-        currIdx =
-            indexOf m.theme [ "default", "white", "solarized-dark", "solarized-light" ]
-
-        nextIdx =
-            if currIdx == 3 then
-                0
-
-            else
-                currIdx + 1
-
-        themeArray =
-            Array.fromList [ "default", "white", "solarized-dark", "solarized-light" ]
+        x = List.foldl (\_ acc -> acc) "default" themes
     in
-    { m | theme = Array.get nextIdx themeArray }
-
-
-indexOf : a -> List a -> a
-indexOf a l =
-    findIndex a l 0
-
-
-findIndex : a -> List a -> Int -> Int
-findIndex a l offset =
-    case l of
-        [] ->
-            -1
-
-        x :: xs ->
-            if x == l then
-                offset
-
-            else
-                findIndex a xs (offset + 1)
+    m
 
 
 initialSource : String
