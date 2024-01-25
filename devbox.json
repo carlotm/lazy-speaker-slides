@@ -1,0 +1,18 @@
+{
+  "packages": [
+    "elmPackages.elm@latest",
+    "elmPackages.elm-language-server@latest",
+    "elmPackages.elm-format@latest",
+    "minify@latest"
+  ],
+  "shell": {
+    "init_hook": [
+      "echo 'Welcome to devbox!' > /dev/null"
+    ],
+    "scripts": {
+      "deploy": [
+        "ELM_OPTS=--optimize make clean all"
+      ]
+    }
+  }
+}

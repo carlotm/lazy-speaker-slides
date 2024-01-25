@@ -1,0 +1,85 @@
+{
+  "lockfile_version": "1",
+  "packages": {
+    "elmPackages.elm-format@latest": {
+      "last_modified": "2024-01-14T03:55:27Z",
+      "resolved": "github:NixOS/nixpkgs/dd5621df6dcb90122b50da5ec31c411a0de3e538#elmPackages.elm-format",
+      "source": "devbox-search",
+      "version": "0.8.7",
+      "systems": {
+        "aarch64-darwin": {
+          "store_path": "/nix/store/jxwbaqaz32ip1cn79wxg9yrxygwagpkw-elm-format-0.8.7"
+        },
+        "aarch64-linux": {
+          "store_path": "/nix/store/6cxqgmgs89q8nb8zv334yh1mw2l54fkp-elm-format-0.8.7"
+        },
+        "x86_64-darwin": {
+          "store_path": "/nix/store/dpd24zp39d7wvzxnp49pjx1aj1j0kd46-elm-format-0.8.7"
+        },
+        "x86_64-linux": {
+          "store_path": "/nix/store/m21pw7rf5yw26iixd0jsilj05lr6nk1l-elm-format-0.8.7"
+        }
+      }
+    },
+    "elmPackages.elm-language-server@latest": {
+      "last_modified": "2024-01-14T03:55:27Z",
+      "resolved": "github:NixOS/nixpkgs/dd5621df6dcb90122b50da5ec31c411a0de3e538#elmPackages.elm-language-server",
+      "source": "devbox-search",
+      "version": "2.8.0",
+      "systems": {
+        "aarch64-darwin": {
+          "store_path": "/nix/store/h1s30rxiacwsmy0zx1krq2cb2mx3mpyh-_at_elm-tooling_slash_elm-language-server-2.8.0"
+        },
+        "aarch64-linux": {
+          "store_path": "/nix/store/hxq8dnc61xcyqmvv05mqkls2l4hhvchb-_at_elm-tooling_slash_elm-language-server-2.8.0"
+        },
+        "x86_64-darwin": {
+          "store_path": "/nix/store/9pakw6h1xsl0pcy6k8krdnv3rkx8a1nb-_at_elm-tooling_slash_elm-language-server-2.8.0"
+        },
+        "x86_64-linux": {
+          "store_path": "/nix/store/nx0wwl2xh42gxw7cxpkgypmh3bn6kvpf-_at_elm-tooling_slash_elm-language-server-2.8.0"
+        }
+      }
+    },
+    "elmPackages.elm@latest": {
+      "last_modified": "2024-01-14T03:55:27Z",
+      "resolved": "github:NixOS/nixpkgs/dd5621df6dcb90122b50da5ec31c411a0de3e538#elmPackages.elm",
+      "source": "devbox-search",
+      "version": "0.19.1",
+      "systems": {
+        "aarch64-darwin": {
+          "store_path": "/nix/store/bmwanlns6rzlzk6yhs6678pg5lk8m0qm-elm-0.19.1"
+        },
+        "aarch64-linux": {
+          "store_path": "/nix/store/2m6bnkzy0iqsx00ajp7v38wjkdsz9sm7-elm-0.19.1"
+        },
+        "x86_64-darwin": {
+          "store_path": "/nix/store/3lqywynaz4wizyfpms6vbpan13pcsqx3-elm-0.19.1"
+        },
+        "x86_64-linux": {
+          "store_path": "/nix/store/hw6aqydcdjqlzmgxh4zz8p53x3kgp4c2-elm-0.19.1"
+        }
+      }
+    },
+    "minify@latest": {
+      "last_modified": "2024-01-22T00:24:37Z",
+      "resolved": "github:NixOS/nixpkgs/5f5210aa20e343b7e35f40c033000db0ef80d7b9#minify",
+      "source": "devbox-search",
+      "version": "2.20.14",
+      "systems": {
+        "aarch64-darwin": {
+          "store_path": "/nix/store/z0n5f4jvg451wwmslw9jv76lk2pznw63-minify-2.20.14"
+        },
+        "aarch64-linux": {
+          "store_path": "/nix/store/ycbzb0yvs0h6l9pm29zw3j497mhd7d4y-minify-2.20.14"
+        },
+        "x86_64-darwin": {
+          "store_path": "/nix/store/2xxzaxnfp63ks5g3n20ai63xyvy7dr48-minify-2.20.14"
+        },
+        "x86_64-linux": {
+          "store_path": "/nix/store/pjq2cpsdrgmvwfhjj9r05af1l150fdwf-minify-2.20.14"
+        }
+      }
+    }
+  }
+}
