@@ -187,3 +187,87 @@ ol
     color: var(--fg-editor-focus);
     border-color: var(--hi);
 }
+
+.Main
+{
+    position: absolute;
+    height: 100%;
+    top: 0;
+    background-color: var(--bg-main);
+    color: var(--fg-main);
+    left: var(--sidebar-w);
+    width: calc(100% - var(--sidebar-w));
+    z-index: 2;
+    overflow-y: auto;
+    transition: left 0.15s ease, width 0.15s ease;
+}
+
+.Main.is-fullw
+{
+    width: 100%;
+    left: 0;
+}
+
+.Main.is-presenting
+{
+    overflow: hidden;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100vw;
+}
+
+.Main.is-presenting .Slide
+{
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    border: 0;
+    transform: translateX(100%);
+    transition: transform 0.2s ease;
+    padding-left: 15%;
+    padding-right: 15%;
+}
+
+.Main.is-presenting .Slide.is-current
+{
+    transform: translateX(0);
+}
+
+.Slide
+{
+    margin: var(--s2);
+    padding: var(--s2);
+    line-height: 1.5;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border: 1px solid var(--border);
+}
+
+.Slide.is-current
+{
+    border-color: var(--hi);
+}
+
+.Slide > * + *
+{
+    margin-top: var(--s1);
+}
+
+.Slide a,
+.Slide a:visited
+{
+    color: var(--hi);
+}
+
+.Slide code,
+.Slide pre
+{
+    color: var(--hi);
+    background-color: var(--border);
+}

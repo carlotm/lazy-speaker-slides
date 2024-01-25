@@ -1,20 +1,13 @@
 module Lss exposing (main)
 
--- import Browser.Dom as Dom
--- import File
--- import File.Download as Download
--- import File.Select as Select
--- import Json.Decode as Decode exposing (Decoder, bool, decodeString, field, int, map4, string)
--- import Json.Encode as Encode
--- import Task
-
-import Debug
 import Browser
 import Browser.Events exposing (onKeyDown)
 import Html exposing (..)
 import Html.Attributes exposing (..)
-import Html.Events exposing (onBlur, onFocus)
+import Html.Events exposing (onBlur, onFocus, onInput)
 import Json.Decode as Decode exposing (string)
+import Markdown
+import Regex
 
 
 
@@ -25,11 +18,15 @@ import Json.Decode as Decode exposing (string)
 
 type alias Model =
     { help : Bool
-    , theme : String
+    , theme : Theme
     , editorFocused : Bool
     , sidebarVisible : Bool
     , source : String
     }
+
+
+type alias Theme =
+    ( Int, String )
 
 
 type Msg
@@ -39,6 +36,7 @@ type Msg
     | NoOp
     | PressedLetter Char
     | PressedControl String
+    | OnMarkdownInput String
 
 
 
@@ -69,10 +67,13 @@ update msg model =
             ( { model | sidebarVisible = not model.sidebarVisible }, Cmd.none )
 
         PressedLetter 't' ->
-            ( { model | sidebarVisible = not model.sidebarVisible }, Cmd.none )
+            ( nextTheme model, Cmd.none )
 
         PressedLetter _ ->
             ( model, Cmd.none )
+
+        OnMarkdownInput v ->
+            ( { model | source = v }, Cmd.none )
 
 
 
@@ -83,7 +84,7 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
-    section [ id "Theme", class model.theme ]
+    section [ id "Theme", class (Tuple.second model.theme) ]
         [ aside
             [ classList
                 [ ( "Sidebar", True )
@@ -92,11 +93,19 @@ view model =
             ]
             [ textarea
                 [ class "Sidebar-editor Editor"
+                , onInput OnMarkdownInput
                 , onFocus (Focus True)
                 , onBlur (Focus False)
-                ]
-                [ text model.source ]
+                , value model.source
+                ] []
             ]
+        , section
+            [ classList
+                [ ( "Main", True )
+                , ( "is-fullw", not model.sidebarVisible )
+                ]
+            ]
+            (generateSlides model.source)
         ]
 
 
@@ -128,9 +137,27 @@ main =
 ----------------------------------------------
 
 
+generateSlides : String -> List (Html Msg)
+generateSlides md =
+    let
+        opts =
+            { caseInsensitive = True, multiline = True }
+
+        maybeRegex =
+            Regex.fromStringWith opts "^(---|===)$"
+
+        regex =
+            Maybe.withDefault Regex.never maybeRegex
+
+        slides =
+            Regex.split regex md
+    in
+    List.map (\s -> Markdown.toHtml [ class "Slide" ] s) slides
+
+
 initialModel : Model
 initialModel =
-    Model False "default" False True initialSource
+    Model False ( 0, "default" ) False True initialSource
 
 
 keyDecoder : Decode.Decoder Msg
@@ -148,35 +175,51 @@ toKey string =
             PressedControl string
 
 
-themes : List String
+themes : List Theme
 themes =
-    [ "default", "white", "solarized-dark", "solarized-light" ]
+    List.indexedMap Tuple.pair [ "default", "white", "solarized-dark", "solarized-light" ]
+
 
 nextTheme : Model -> Model
 nextTheme m =
     let
-        x = List.foldl (\_ acc -> acc) "default" themes
+        currentThemeIdx =
+            Tuple.first m.theme
+
+        nextThemeIdx =
+            if currentThemeIdx == List.length themes - 1 then
+                0
+
+            else
+                currentThemeIdx + 1
     in
-    m
+    case List.filter (\( i, _ ) -> i == nextThemeIdx) themes of
+        [ t ] ->
+            { m | theme = t }
+
+        _ ->
+            m
 
 
 initialSource : String
 initialSource =
-    """text before the first title is ignored...
-
-# Lazy Speaker Slides
+    """# Lazy Speaker Slides
 
 With **Lazy Speaker Slides** you can write presentations _in seconds_.
 
 Forget the style, focus on the content! :)
 
-Every H1 is a different slide.
+Use hr (---) to define slides.
+
+---
 
 # Features
 
 * Various color schemes
 * Real time preview
 * Emoji support 🤌 😀 🐺
+
+---
 
 # Code snippets
 
@@ -187,6 +230,8 @@ PATH='/home/user/code'
 cd $PATH
 mkdir foo
 ```
+
+---
 
 # Keyboard shortcuts
 

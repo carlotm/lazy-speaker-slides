@@ -13,7 +13,9 @@
             "elm/html": "1.0.0",
             "elm/json": "1.1.3",
             "elm/random": "1.0.0",
+            "elm/regex": "1.0.0",
             "elm-community/json-extra": "4.3.0",
+            "elm-explorations/markdown": "1.0.0",
             "feathericons/elm-feather": "1.5.0"
         },
         "indirect": {
