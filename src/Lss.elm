@@ -8,6 +8,7 @@ module Lss exposing (main)
 -- import Json.Encode as Encode
 -- import Task
 
+import Array
 import Browser
 import Browser.Events exposing (onKeyDown)
 import Html exposing (..)
@@ -22,18 +23,12 @@ import Json.Decode as Decode exposing (string)
 ----------------------------------------------
 
 
-type Theme
-    = Default
-    | White
-    | SolarizedDark
-    | SolarizedLight
-
-
 type alias Model =
     { help : Bool
-    , theme : Theme
+    , theme : String
     , editorFocused : Bool
     , sidebarVisible : Bool
+    , source : String
     }
 
 
@@ -73,6 +68,9 @@ update msg model =
         PressedLetter ' ' ->
             ( { model | sidebarVisible = not model.sidebarVisible }, Cmd.none )
 
+        PressedLetter 't' ->
+            ( { model | sidebarVisible = not model.sidebarVisible }, Cmd.none )
+
         PressedLetter _ ->
             ( model, Cmd.none )
 
@@ -85,7 +83,7 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
-    section [ id "Theme", class (themeToString model.theme) ]
+    section [ id "Theme", class model.theme ]
         [ aside
             [ classList
                 [ ( "Sidebar", True )
@@ -97,7 +95,7 @@ view model =
                 , onFocus (Focus True)
                 , onBlur (Focus False)
                 ]
-                []
+                [ text model.source ]
             ]
         ]
 
@@ -132,7 +130,7 @@ main =
 
 initialModel : Model
 initialModel =
-    Model False Default False True
+    Model False "default" False True initialSource
 
 
 keyDecoder : Decode.Decoder Msg
@@ -150,17 +148,78 @@ toKey string =
             PressedControl string
 
 
-themeToString : Theme -> String
-themeToString t =
-    case t of
-        Default ->
-            "default"
+nextTheme : Model -> Model
+nextTheme m =
+    let
+        currIdx =
+            indexOf m.theme [ "default", "white", "solarized-dark", "solarized-light" ]
 
-        White ->
-            "white"
+        nextIdx =
+            if currIdx == 3 then
+                0
 
-        SolarizedDark ->
-            "solarized-dark"
+            else
+                currIdx + 1
 
-        SolarizedLight ->
-            "solarized-light"
+        themeArray =
+            Array.fromList [ "default", "white", "solarized-dark", "solarized-light" ]
+    in
+    { m | theme = Array.get nextIdx themeArray }
+
+
+indexOf : a -> List a -> a
+indexOf a l =
+    findIndex a l 0
+
+
+findIndex : a -> List a -> Int -> Int
+findIndex a l offset =
+    case l of
+        [] ->
+            -1
+
+        x :: xs ->
+            if x == l then
+                offset
+
+            else
+                findIndex a xs (offset + 1)
+
+
+initialSource : String
+initialSource =
+    """text before the first title is ignored...
+
+# Lazy Speaker Slides
+
+With **Lazy Speaker Slides** you can write presentations _in seconds_.
+
+Forget the style, focus on the content! :)
+
+Every H1 is a different slide.
+
+# Features
+
+* Various color schemes
+* Real time preview
+* Emoji support 🤌 😀 🐺
+
+# Code snippets
+
+Code can be inline `rm -r mydir`, or block:
+
+```
+PATH='/home/user/code'
+cd $PATH
+mkdir foo
+```
+
+# Keyboard shortcuts
+
+* `spacebar` show/hide editor
+* `arrow keys` next/previous slide
+* `h` show/hide keyboard shortcuts help
+* `t` cycle through themes
+* `p` toggle between expose/presentation mode
+
+    """
