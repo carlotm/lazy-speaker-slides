@@ -4,7 +4,7 @@ import Browser
 import Browser.Events exposing (onKeyDown)
 import Html exposing (..)
 import Html.Attributes exposing (..)
-import Html.Events exposing (onBlur, onFocus, onInput)
+import Html.Events exposing (onBlur, onClick, onFocus, onInput)
 import Json.Decode as Decode exposing (string)
 import Markdown
 import Regex
@@ -23,6 +23,7 @@ type alias Model =
     , sidebarVisible : Bool
     , source : String
     , mode : Mode
+    , current : Int
     }
 
 
@@ -37,12 +38,11 @@ type alias Theme =
 
 type Msg
     = Focus Bool
-    | ShowHelp
-    | GotHelp
-    | NoOp
+    | ShowHelp Bool
     | PressedLetter Char
     | PressedControl String
     | OnMarkdownInput String
+    | NoOp
 
 
 
@@ -60,33 +60,38 @@ update msg model =
         Focus b ->
             ( { model | editorFocused = b }, Cmd.none )
 
-        ShowHelp ->
-            ( { model | help = True }, Cmd.none )
+        ShowHelp b ->
+            ( { model | help = b }, Cmd.none )
 
-        GotHelp ->
+        PressedControl "Escape" ->
             ( { model | help = False }, Cmd.none )
 
-        PressedControl _ ->
-            ( model, Cmd.none )
+        PressedControl "ArrowDown" ->
+            ( { model | current = next model.current (List.length (Regex.find reExtractSlides model.source)) }, Cmd.none )
+
+        PressedControl "ArrowRight" ->
+            ( { model | current = next model.current (List.length (Regex.find reExtractSlides model.source)) }, Cmd.none )
+
+        PressedControl "ArrowUp" ->
+            ( { model | current = prev model.current }, Cmd.none )
+
+        PressedControl "ArrowLeft" ->
+            ( { model | current = prev model.current }, Cmd.none )
 
         PressedLetter ' ' ->
             ( { model | sidebarVisible = not model.sidebarVisible }, Cmd.none )
 
         PressedLetter 'p' ->
-            ( { model
-                | mode =
-                    case model.mode of
-                        Presentation ->
-                            Expose
-
-                        Expose ->
-                            Presentation
-              }
-            , Cmd.none
-            )
+            ( { model | mode = cycleMode model.mode }, Cmd.none )
 
         PressedLetter 't' ->
             ( nextTheme model, Cmd.none )
+
+        PressedLetter 'h' ->
+            ( { model | help = True }, Cmd.none )
+
+        PressedControl _ ->
+            ( model, Cmd.none )
 
         PressedLetter _ ->
             ( model, Cmd.none )
@@ -126,7 +131,27 @@ view model =
                 , ( "is-presenting", model.mode == Presentation )
                 ]
             ]
-            (generateSlides model.source)
+            (generateSlides model.source model.current)
+        , if model.help then
+            section [ class "Help" ]
+                [ h2 [] [ text "Keys definitions" ]
+                , dl []
+                    [ dt [] [ text "spacebar" ]
+                    , dd [] [ text "show/hide editor" ]
+                    , dt [] [ text "arrow keys" ]
+                    , dd [] [ text "next/previous slide" ]
+                    , dt [] [ text "h" ]
+                    , dd [] [ text "show/hide this help" ]
+                    , dt [] [ text "t" ]
+                    , dd [] [ text "cycle through themes" ]
+                    , dt [] [ text "p" ]
+                    , dd [] [ text "toggle between expose/presentation mode" ]
+                    ]
+                , button [ class "Help-gotit", onClick (ShowHelp False) ] [ text "Got it" ]
+                ]
+
+          else
+            text ""
         ]
 
 
@@ -158,27 +183,34 @@ main =
 ----------------------------------------------
 
 
-generateSlides : String -> List (Html Msg)
-generateSlides md =
+generateSlides : String -> Int -> List (Html Msg)
+generateSlides md c =
+    List.indexedMap
+        (\i s ->
+            Markdown.toHtml
+                [ class "Slide"
+                , classList [ ( "is-current", i == c ) ]
+                ]
+                s
+        )
+        (Regex.split reExtractSlides md)
+
+
+reExtractSlides : Regex.Regex
+reExtractSlides =
     let
         opts =
-            { caseInsensitive = True, multiline = True }
+            { caseInsensitive = False, multiline = True }
 
         maybeRegex =
             Regex.fromStringWith opts "^(---|===)$"
-
-        regex =
-            Maybe.withDefault Regex.never maybeRegex
-
-        slides =
-            Regex.split regex md
     in
-    List.map (\s -> Markdown.toHtml [ class "Slide" ] s) slides
+    Maybe.withDefault Regex.never maybeRegex
 
 
 initialModel : Model
 initialModel =
-    Model False ( 0, "default" ) False True initialSource Expose
+    Model False ( 0, "default" ) False True initialSource Expose 0
 
 
 keyDecoder : Decode.Decoder Msg
@@ -222,6 +254,26 @@ nextTheme m =
             m
 
 
+prev : Int -> Int
+prev x =
+    Basics.max 0 (x - 1)
+
+
+next : Int -> Int -> Int
+next x m =
+    Basics.min m (x + 1)
+
+
+cycleMode : Mode -> Mode
+cycleMode m =
+    case m of
+        Presentation ->
+            Expose
+
+        Expose ->
+            Presentation
+
+
 initialSource : String
 initialSource =
     """# Lazy Speaker Slides
@@ -230,7 +282,7 @@ With **Lazy Speaker Slides** you can write presentations _in seconds_.
 
 Forget the style, focus on the content! :)
 
-Use hr (---) to define slides.
+Use --- or === to start a new slide.
 
 ---
 

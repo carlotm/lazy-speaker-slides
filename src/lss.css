@@ -272,3 +272,57 @@ ol
     color: var(--hi);
     background-color: var(--border);
 }
+
+.Help {
+    z-index: 999;
+    position: fixed;
+    width: 80vw;
+    height: 80vh;
+    top: 10vh;
+    left: 10vw;
+    background-color: var(--bg-main);
+    box-shadow: 0 0 40px 20px var(--border);
+    border-radius: 4px;
+    display: flex;
+    color: var(--fg-main);
+    flex-wrap: wrap;
+    flex-direction: column;
+    justify-content: center;
+    padding: 40px;
+}
+
+.Help dl {
+    margin-top: var(--s1);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+}
+
+.Help dt {
+    font-size: var(--s2);
+    padding: 6px;
+    background: var(--bg-main);
+    border-radius: 4px;
+    flex: 0 0 150px;
+    margin-bottom: 4px;
+}
+
+.Help dd {
+    font-size: var(--s2);
+    flex: 0 0 calc(100% - 150px);
+    padding: 0 10px;
+}
+
+.Help-gotit {
+    padding: var(--s2);
+    cursor: pointer;
+    border: 0;
+    font-size: 1rem;
+    font-weight: bold;
+    background-color: var(--hi);
+    color: var(--bg-main);
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    border-radius: 3px;
+}
