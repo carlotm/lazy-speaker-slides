@@ -22,7 +22,13 @@ type alias Model =
     , editorFocused : Bool
     , sidebarVisible : Bool
     , source : String
+    , mode : Mode
     }
+
+
+type Mode
+    = Expose
+    | Presentation
 
 
 type alias Theme =
@@ -66,6 +72,19 @@ update msg model =
         PressedLetter ' ' ->
             ( { model | sidebarVisible = not model.sidebarVisible }, Cmd.none )
 
+        PressedLetter 'p' ->
+            ( { model
+                | mode =
+                    case model.mode of
+                        Presentation ->
+                            Expose
+
+                        Expose ->
+                            Presentation
+              }
+            , Cmd.none
+            )
+
         PressedLetter 't' ->
             ( nextTheme model, Cmd.none )
 
@@ -97,12 +116,14 @@ view model =
                 , onFocus (Focus True)
                 , onBlur (Focus False)
                 , value model.source
-                ] []
+                ]
+                []
             ]
         , section
             [ classList
                 [ ( "Main", True )
                 , ( "is-fullw", not model.sidebarVisible )
+                , ( "is-presenting", model.mode == Presentation )
                 ]
             ]
             (generateSlides model.source)
@@ -157,7 +178,7 @@ generateSlides md =
 
 initialModel : Model
 initialModel =
-    Model False ( 0, "default" ) False True initialSource
+    Model False ( 0, "default" ) False True initialSource Expose
 
 
 keyDecoder : Decode.Decoder Msg

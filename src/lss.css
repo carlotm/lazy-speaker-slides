@@ -100,8 +100,7 @@ body
 
 pre
 {
-    line-height: 1.5;
-    padding: var(--s2);
+    padding: var(--s1);
     border-radius: 4px;
 }
 
@@ -111,6 +110,7 @@ code
     padding: calc(var(--s1) / 2) var(--s1);
     border-radius: 2px;
     margin-bottom: var(--s1);
+    line-height: 1.2;
 }
 
 pre > code
@@ -118,6 +118,7 @@ pre > code
     padding: 0;
     border-radius: 0;
     margin-bottom: 0;
+    line-height: 1.4;
 }
 
 h1,
