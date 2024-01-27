@@ -2,6 +2,8 @@
 
 Create presentations in seconds using the markdown syntax.
 
+[Try lazy speaker slides now!](https://carlotm.github.io/lazy-speaker-slides)
+
 ## Local development
 
 This app uses [devbox](https://www.jetpack.io/devbox/).
